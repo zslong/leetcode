@@ -26,20 +26,30 @@ public class GasStation134 {
             while (i < len) {
                 int remain = gas[i] - cost[i];
                 sum += remain;
-                if (prevSum + sum < 0) {
+                if (sum < 0) {
                     start = i+1;
-                    prevSum = sum;
+                    prevSum += sum;
                     sum = 0;
                 }
                 i++;
             }
 
-            if (start >= 0 || start < len) {
+            if (sum + prevSum >= 0) {
                 return start;
             } else {
                 return -1;
             }
 
         }
+    }
+
+    public static void main(String[] args) {
+        GasStation134 gasStation134 = new GasStation134();
+        Solution solution = gasStation134.new Solution();
+
+        int[] gas = new int[]{99, 98, 97, 100};
+        int[] cost = new int[]{100, 100, 100 ,97};
+
+        System.out.println(solution.canCompleteCircuit(gas, cost));
     }
 }
