@@ -27,7 +27,7 @@ public class CountPrimes204 {
             int sevenTimesNum = 14;
 
             while (twoTimesNum < n || threeTimesNum < n || fiveTimesNum < n || sevenTimesNum < n) {
-                nonPrimes.add(threeTimesNum);
+                nonPrimes.add(twoTimesNum);
                 if (threeTimesNum < n) {
                     nonPrimes.add(threeTimesNum);
                 }
