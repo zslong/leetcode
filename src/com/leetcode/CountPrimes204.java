@@ -13,39 +13,23 @@ public class CountPrimes204 {
     class Solution {
 
         public int countPrimes(int n) {
-            if (n < 2) {
-                return 0;
+            boolean[] isPrime = new boolean[n];
+            for (int i = 2; i < n; i++) {
+                isPrime[i] = true;
             }
-
-            Set<Integer> nonPrimes = new HashSet<>();
-            nonPrimes.add(1);
-
-            int i = 2;
-            int twoTimesNum = 4;
-            int threeTimesNum = 9;
-            int fiveTimesNum = 10;
-            int sevenTimesNum = 14;
-
-            while (twoTimesNum < n || threeTimesNum < n || fiveTimesNum < n || sevenTimesNum < n) {
-                nonPrimes.add(twoTimesNum);
-                if (threeTimesNum < n) {
-                    nonPrimes.add(threeTimesNum);
+            // Loop's ending condition is i * i < n instead of i < sqrt(n)
+            // to avoid repeatedly calling an expensive function sqrt().
+            for (int i = 2; i * i < n; i++) {
+                if (!isPrime[i]) continue;
+                for (int j = i * i; j < n; j += i) {
+                    isPrime[j] = false;
                 }
-                if (fiveTimesNum < n) {
-                    nonPrimes.add(fiveTimesNum);
-                }
-                if (sevenTimesNum < n) {
-                    nonPrimes.add(sevenTimesNum);
-                }
-                i++;
-                twoTimesNum = 2*i;
-                threeTimesNum = 3 * i;
-                fiveTimesNum = 5 * i;
-                sevenTimesNum = 7 * i;
             }
-
-            // less than n -> n-1, exclude 1 -> n-2
-            return n - 1 - nonPrimes.size();
+            int count = 0;
+            for (int i = 2; i < n; i++) {
+                if (isPrime[i]) count++;
+            }
+            return count;
         }
     }
 
