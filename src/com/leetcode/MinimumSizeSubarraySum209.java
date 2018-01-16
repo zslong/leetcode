@@ -14,39 +14,18 @@ public class MinimumSizeSubarraySum209 {
                 return 0;
             }
 
+            int n = nums.length;
+            int ans = Integer.MAX_VALUE;
             int left = 0;
-            int right = 0;
-            int sum = nums[left];
-            int len = nums.length + 1;
-
-            while (right < nums.length) {
-                if (sum >= s) {
-                    int tempLen = right - left + 1;
-                    if (tempLen < len) {
-                        len = tempLen;
-                    }
-                    sum -= nums[left];
-                    left++;
-                    if (left > right && left < nums.length) {
-                        right = left;
-                        sum = nums[left];
-                    }
-                } else {
-                    right++;
-                    if (right < nums.length) {
-                        sum += nums[right];
-                    }
+            int sum = 0;
+            for (int i = 0; i < n; i++) {
+                sum += nums[i];
+                while (sum >= s) {
+                    ans = Math.min(ans, i + 1 - left);
+                    sum -= nums[left++];
                 }
             }
-
-            if (sum >= s) {
-                int tempLen = right - left + 1;
-                if (tempLen < len) {
-                    len = tempLen;
-                }
-            }
-
-            return len > nums.length ? 0 : len;
+            return (ans != Integer.MAX_VALUE) ? ans : 0;
         }
     }
 }
