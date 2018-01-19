@@ -21,47 +21,28 @@ public class CountCompleteTreeNodes222 {
         TreeNode(int x) { val = x; }
     }
 
+    /**
+     * Explanation
+
+     The height of a tree can be found by just going left. Let a single node tree have height 0. Find the height h of the whole tree. If the whole tree is empty, i.e., has height -1, there are 0 nodes.
+
+     Otherwise check whether the height of the right subtree is just one less than that of the whole tree, meaning left and right subtree have the same height.
+
+     If yes, then the last node on the last tree row is in the right subtree and the left subtree is a full tree of height h-1. So we take the 2^h-1 nodes of the left subtree plus the 1 root node plus recursively the number of nodes in the right subtree.
+     If no, then the last node on the last tree row is in the left subtree and the right subtree is a full tree of height h-2. So we take the 2^(h-1)-1 nodes of the right subtree plus the 1 root node plus recursively the number of nodes in the left subtree.
+     Since I halve the tree in every recursive step, I have O(log(n)) steps. Finding a height costs O(log(n)). So overall O(log(n)^2).
+
+     <a href="https://leetcode.com/problems/count-complete-tree-nodes/discuss/61958">origin solution</a>
+     */
     class Solution {
+        int height(TreeNode root) {
+            return root == null ? -1 : 1 + height(root.left);
+        }
         public int countNodes(TreeNode root) {
-            if (root == null) {
-                return 0;
-            }
-
-            Stack<TreeNode> stack = new Stack<>();
-            stack.push(root);
-            int depth = 0;
-            int lastLevelCnt = 0;
-            Map<TreeNode, Integer> nodeLevel = new HashMap<>();
-            nodeLevel.put(root, 1);
-
-            while (stack.size() > 0) {
-                TreeNode top = stack.pop();
-                if (top.left == null) {
-                    if (nodeLevel.get(top) < depth) {
-                        break;
-                    } else {
-                        depth = nodeLevel.get(top);
-                        lastLevelCnt += 1;
-                    }
-                } else if (top.right == null) {
-                    depth = nodeLevel.get(top) + 1;
-                    lastLevelCnt += 1;
-                    break;
-                } else {
-                    nodeLevel.put(top.right, nodeLevel.get(top) + 1);
-                    nodeLevel.put(top.left, nodeLevel.get(top) + 1);
-                    stack.push(top.right);
-                    stack.push(top.left);
-                }
-            }
-
-            int res = 0;
-            for (int i = 0; i < depth-1; i++) {
-                res += Math.pow(2, i);
-            }
-            res += lastLevelCnt;
-
-            return res;
+            int h = height(root);
+            return h < 0 ? 0 :
+                    height(root.right) == h-1 ? (1 << h) + countNodes(root.right)
+                            : (1 << h-1) + countNodes(root.left);
         }
     }
 
