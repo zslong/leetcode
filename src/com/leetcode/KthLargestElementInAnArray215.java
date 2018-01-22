@@ -32,7 +32,7 @@ public class KthLargestElementInAnArray215 {
 
         private void siftDown(int[] nums, int start, int end) {
             int i = start;
-            int j = i << 2 + 1;
+            int j = (i << 1) + 1;
             int temp = nums[i];
             while (j <= end) {
                 if (j < end && nums[j] > nums[j + 1]) {
@@ -43,7 +43,7 @@ public class KthLargestElementInAnArray215 {
                 } else {
                     nums[i] = nums[j];
                     i = j;
-                    j = i << 2 + 1;
+                    j = (i << 1) + 1;
                 }
             }
             nums[i] = temp;
