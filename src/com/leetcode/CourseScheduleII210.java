@@ -1,9 +1,6 @@
 package com.leetcode;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by shilong.zhang on 2018/1/29.
@@ -25,61 +22,55 @@ import java.util.Set;
  There are a total of 4 courses to take. To take course 3 you should have finished both courses 1 and 2. Both courses 1 and 2 should be taken after you finished course 0. So one correct course order is [0,1,2,3]. Another correct ordering is[0,2,1,3].
  */
 
-
+/**
+ * Solution is copied from <a href='https://leetcode.com/problems/course-schedule-ii/discuss/59317'>here</a>
+ * Basic idea is using directed graph topological sort
+ */
 public class CourseScheduleII210 {
     class Solution {
         public int[] findOrder(int numCourses, int[][] prerequisites) {
-            List<Integer> result = new ArrayList<>();
-            ArrayList<Integer>[] graph = new ArrayList[numCourses];
+            // record each node's income edge counts
+            int[] incLinkCounts = new int[numCourses];
+            List<List<Integer>> adjs = new ArrayList<>();
 
-            for (int i = 0; i < numCourses; i++) {
-                graph[i] = new ArrayList<>();
-            }
-
-            for (int[] pre : prerequisites) {
-                graph[pre[1]].add(pre[0]);
-            }
-
-            boolean[] visited = new boolean[numCourses];
-
-            for (int i = 0; i < numCourses; i++) {
-                if (!dfs(i, graph, visited, result)) {
-                    result = new ArrayList<>();
-                    break;
-                }
-
-                if (result.size() == numCourses) {
-                    break;
-                }
-
-                result = new ArrayList<>();
-            }
-
-            int[] arr = new int[result.size()];
-            for (int i = 0; i < result.size(); i++) {
-                arr[i] = result.get(i);
-            }
-
-            return arr;
+            initGraph(incLinkCounts, adjs, prerequisites);
+            return solveByBFS(incLinkCounts, adjs);
         }
 
-        private boolean dfs(int start, ArrayList<Integer>[] graph, boolean[] visited, List<Integer> result) {
-            if (visited[start]) {
-                return false;
-            } else {
-                visited[start] = true;
-                result.add(start);
+        private void initGraph(int[] incLinkCounts, List<List<Integer>> adjs, int[][] prerequisites) {
+            int n = incLinkCounts.length;
+            while (n-- > 0) {
+                adjs.add(new ArrayList<>());
             }
 
-            for (Integer neighbor : graph[start]) {
-                if (!dfs(neighbor, graph, visited, result)) {
-                    return false;
+            for (int[] edge : prerequisites) {
+                incLinkCounts[edge[0]]++;
+                adjs.get(edge[1]).add(edge[0]);
+            }
+        }
+
+        private int[] solveByBFS(int[] incLinkCounts, List<List<Integer>> adjs) {
+            int[] order = new int[incLinkCounts.length];
+            Queue<Integer> toVisit = new LinkedList<>();
+
+            for (int i = 0; i < incLinkCounts.length; i++) {
+                if (incLinkCounts[i] == 0) toVisit.add(i);
+            }
+
+            int visited = 0;
+
+            while (!toVisit.isEmpty()) {
+                int from = toVisit.poll();
+                order[visited++] = from;
+                for (int to : adjs.get(from)) {
+                    incLinkCounts[to]--;
+                    if (incLinkCounts[to] == 0) {
+                        toVisit.add(to);
+                    }
                 }
             }
 
-            visited[start] = false;
-
-            return true;
+            return visited == incLinkCounts.length ? order : new int[0];
         }
     }
 }
